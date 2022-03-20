@@ -1,0 +1,11 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-RiderBlueprintExtension-0001.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\UnrealEngine_Workspace\SCP\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Module.RiderBlueprintExtension.cpp.obj"
+"C:\UnrealEngine_Workspace\SCP\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Default.rc2.res"
+/OUT:"C:\UnrealEngine_Workspace\SCP\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\UnrealEditor-RiderBlueprintExtension-0001.lib"
