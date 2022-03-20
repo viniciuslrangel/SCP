@@ -86,13 +86,16 @@ void ASCPCharacter::BeginPlay()
 		TArray<AActor*> PostProcessingActors;
 		UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("GLOBAL_POSTPROCESSING"), PostProcessingActors);
 		check(PostProcessingActors.Num() == 1);
-		AActor* Actor = PostProcessingActors[0];
-		APostProcessVolume* Volume = Cast<APostProcessVolume>(Actor);
-		check(Volume);
-		// Volume->AddOrUpdateBlendable();
-		BlinkMaterial = UMaterialInstanceDynamic::Create(BaseBlinkMaterial, this);
-		Volume->AddOrUpdateBlendable(BlinkMaterial);
-		R_BlinkClient(false);
+		if(PostProcessingActors.Num() == 1)
+		{
+			AActor* Actor = PostProcessingActors[0];
+			APostProcessVolume* Volume = Cast<APostProcessVolume>(Actor);
+			check(Volume);
+			// Volume->AddOrUpdateBlendable();
+			BlinkMaterial = UMaterialInstanceDynamic::Create(BaseBlinkMaterial, this);
+			Volume->AddOrUpdateBlendable(BlinkMaterial);
+			R_BlinkClient(false);
+		}
 	}
 }
 
