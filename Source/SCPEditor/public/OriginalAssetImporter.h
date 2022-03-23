@@ -32,9 +32,9 @@ public:
 		void (FOriginalAssetImporter::*Target)(const FString&) const
 	) const;
 
-	void ImportRMeshInteractive(const FString& Path) const;
+	void ImportMeshInteractive(const FString& Path) const;
 
-	TSubclassOf<AActor> ImportRMesh(const FString& AssetFullPath, const FString& TargetAssetPath, FString& ErrCode) const;
+	TSubclassOf<AActor> ImportMesh(const FString& AssetFullPath, const FString& TargetAssetPath, FString& ErrCode) const;
 
 	void ImportLevelInteractive(const FString& Path) const;
 
@@ -76,8 +76,10 @@ inline FString Hash(const FRawMesh& Mesh)
 class IMeshImporter
 {
 public:
+	using FData = TTuple<FTransform, FRawMesh, FTextureData>;
+	
 	virtual ~IMeshImporter()
 	{
 	};
-	virtual bool Import(FArchive& Reader, TArray<TPair<FRawMesh, FTextureData>>& Out) = 0;
+	virtual bool Import(FArchive& Reader, TArray<FData>& Out) = 0;
 };\

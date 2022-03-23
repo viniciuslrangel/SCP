@@ -119,17 +119,17 @@ TSharedRef<SDockTab> FSCPEditorModule::OpenTab(const FSpawnTabArgs& args)
 			]
 		),
 		FSlateUtility::AddLabel(
-			FText::FromString(TEXT("Import RMesh file (StaticMesh)")),
+			FText::FromString(TEXT("Import mesh file (StaticMesh/X)")),
 			SNew(SButton)
 					.Text(FText::FromString(TEXT("Import")))
 					.OnClicked(FOnClicked::CreateRaw(
 				             &FOriginalAssetImporter::Get(),
 				             &FOriginalAssetImporter::WrapFileDialog,
 				             FOriginalAssetImporter::FWrapFileOptions{
-					             "Open RMESH asset file",
-					             "RMESH File (*.rmesh)|*.rmesh"
+					             "Open MESH asset file",
+					             "RMESH File (*.rmesh)|*.rmesh",
 				             },
-				             &FOriginalAssetImporter::ImportRMeshInteractive
+				             &FOriginalAssetImporter::ImportMeshInteractive
 			             ))
 		),
 		FSlateUtility::AddLabel(

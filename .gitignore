@@ -19,6 +19,10 @@
 *.dylib
 *.dll
 
+# Debug symbols
+*.pdb
+*.exp
+
 # Fortran module files
 *.mod
 

@@ -32,7 +32,5 @@ public class SCPEditor : ModuleRules
 			"DeveloperSettings",
 			"Kismet"
 		});
-		
-		PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "minidx9", "d3dxof.lib"));
 	}
 }

@@ -13,7 +13,7 @@
 #include "MeshDescription.h"
 #include "PackageTools.h"
 #include "RawMesh.h"
-#include "RMeshImport.h"
+#include "RMeshImporter.h"
 #include "SCPEditor.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Dialogs/DlgPickAssetPath.h"
@@ -68,7 +68,7 @@ FReply FOriginalAssetImporter::WrapFileDialog(
 	return FReply::Handled();
 }
 
-void FOriginalAssetImporter::ImportRMeshInteractive(const FString& Path) const
+void FOriginalAssetImporter::ImportMeshInteractive(const FString& Path) const
 {
 	const TSharedPtr<SDlgPickPath> PickAssetPathWidget = SNew(SDlgPickPath)
 		.Title(FText::FromString(TEXT("Choose save assets location Location")));
@@ -79,13 +79,13 @@ void FOriginalAssetImporter::ImportRMeshInteractive(const FString& Path) const
 
 	const FString TargetAssetPath = PickAssetPathWidget->GetPath().ToString();
 
-	if (FString Err; !ImportRMesh(Path, TargetAssetPath, Err))
+	if (FString Err; !ImportMesh(Path, TargetAssetPath, Err))
 	{
 		const FText Msg = FText::FromString(Err);
-		UE_LOG(LogSCPEditor, Error, TEXT("Import RMesh error %s"), *Err);
+		UE_LOG(LogSCPEditor, Error, TEXT("Import Mesh error %s"), *Err);
 		SOutputLogDialog::Open(
 			FText::FromString(TEXT("Import error")),
-			FText::FromString(TEXT("Could not import rmesh file")),
+			FText::FromString(TEXT("Could not import Mesh file")),
 			Msg
 		);
 	}
@@ -111,7 +111,7 @@ struct FRoomTemplate
 };
 
 
-TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFullPath,
+TSubclassOf<AActor> FOriginalAssetImporter::ImportMesh(const FString& AssetFullPath,
                                                         const FString& TargetAssetPath,
                                                         FString& ErrCode) const
 {
@@ -146,7 +146,7 @@ TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFull
 		}
 	}
 
-	UE_LOG(LogSCPEditor, Display, TEXT("importing rmesh from %s"), *AssetFullPath);
+	UE_LOG(LogSCPEditor, Display, TEXT("importing mesh from %s"), *AssetFullPath);
 
 	const TUniquePtr<FArchive> Reader{IFileManager::Get().CreateFileReader(*AssetFullPath)};
 
@@ -160,16 +160,16 @@ TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFull
 	const FString OriginalGamePath = UConfig::Get().OriginalGamePath;
 
 
-	TArray<UStaticMesh*> StaticMeshList;
+	TArray<TPair<FTransform, UStaticMesh*>> StaticMeshList;
 
-	TArray<TPair<FRawMesh, FTextureData>> MeshData;
+	TArray<TTuple<FTransform, FRawMesh, FTextureData>> MeshData;
 	Importer->Import(*Reader, MeshData);
 
 	StaticMeshList.SetNum(MeshData.Num());
 
 	for (int32 MeshDataI = 0; MeshDataI < MeshData.Num(); MeshDataI++)
 	{
-		auto& [RawMesh, TextureData] = MeshData[MeshDataI];
+		auto& [Transform, RawMesh, TextureData] = MeshData[MeshDataI];
 		UMaterial* Material = nullptr;
 
 		if (!TextureData.Texture.IsEmpty())
@@ -284,7 +284,7 @@ TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFull
 			                                                  LOAD_Quiet | LOAD_NoWarn);
 			if (StaticMesh != nullptr)
 			{
-				StaticMeshList[MeshDataI] = StaticMesh;
+				StaticMeshList[MeshDataI] = {Transform, StaticMesh};
 				continue;
 			}
 		}
@@ -307,7 +307,7 @@ TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFull
 			return nullptr;
 		}
 
-		StaticMeshList[MeshDataI] = StaticMesh;
+		StaticMeshList[MeshDataI] = {Transform, StaticMesh};
 	}
 
 	UPackage* ActorMeshPackage = CreatePackage(*MeshActorPath);
@@ -332,7 +332,7 @@ TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFull
 
 	for (int32 MeshI = 0; MeshI < StaticMeshList.Num(); MeshI++)
 	{
-		UStaticMesh* StaticMesh = StaticMeshList[MeshI];
+		auto [Transform, StaticMesh] = StaticMeshList[MeshI];
 
 		USCS_Node* Node = MeshBlueprint->SimpleConstructionScript->CreateNode(UStaticMeshComponent::StaticClass());
 
@@ -340,7 +340,9 @@ TSubclassOf<AActor> FOriginalAssetImporter::ImportRMesh(const FString& AssetFull
 			*(FString(TEXT("Mesh_")) + FString::FromInt(MeshI))
 		));
 
-		Cast<UStaticMeshComponent>(Node->ComponentTemplate.Get())->bCastDynamicShadow = false;
+		UStaticMeshComponent *Comp = Cast<UStaticMeshComponent>(Node->ComponentTemplate.Get());
+		Comp->bCastDynamicShadow = false;
+		Comp->SetRelativeTransform(Transform);
 
 		FComponentAssetBrokerage::AssignAssetToComponent(Node->ComponentTemplate, StaticMesh);
 		RootNode->AddChildNode(Node);
@@ -417,11 +419,11 @@ bool FOriginalAssetImporter::ImportLevel(const FString& AssetFullPath, const FSt
 		FRoomTemplate& Room = FacilityRooms[RoomI];
 		Reader >> Room.XPos;
 		Reader >> Room.YPos;
-		Room.Name = FRMeshImporter::ReadString(*Reader);
+		Room.Name = ReadBlitzString(*Reader);
 		Room.Name.ToLowerInline();
 		Reader >> Room.Angle;
 
-		Room.EventName = FRMeshImporter::ReadString(*Reader);
+		Room.EventName = ReadBlitzString(*Reader);
 		Reader >> Room.EventProb;
 	}
 
@@ -461,7 +463,7 @@ bool FOriginalAssetImporter::ImportLevel(const FString& AssetFullPath, const FSt
 		RoomAssetPath.ReplaceCharInline(TEXT('\\'), TEXT('/'));
 
 		FString Err;
-		Actor = ImportRMesh(OriginalGamePath / RoomAssetPath, TargetAssetPath, Err);
+		Actor = ImportMesh(OriginalGamePath / RoomAssetPath, TargetAssetPath, Err);
 		if (!Actor)
 		{
 			UE_LOG(LogSCPEditor, Warning, TEXT("skipping room %s: failed to load actor"), *Room.Name);

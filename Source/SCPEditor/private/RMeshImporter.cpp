@@ -176,7 +176,7 @@ bool FRMeshImporter::Import(FArchive& Reader, TArray<FData>& Out)
 			Mesh.FaceMaterialIndices.Add(0);
 		}
 
-		Out.Add({FTransform(), Mesh, TexData});
+		Out.Emplace(FTransform(), Mesh, TexData);
 	}
 
 	return true;
