@@ -15,7 +15,5 @@ public:
 		return Instance;
 	}
 
-	static FString ReadString(FArchive& Archive);
-
-	bool Import(FArchive& Reader, TArray<TPair<FRawMesh, FTextureData>>& Out) override;
+	bool Import(FArchive& Reader, TArray<FData>& Out) override;
 };

@@ -54,3 +54,21 @@ bool operator>>(const TUniquePtr<FArchive>& Archive, T& Target)
 {
 	return operator>><T, Size>(*Archive, Target);
 }
+
+inline FString ReadBlitzString(FArchive& Archive)
+{
+	if (Archive.GetArchiveState().IsError())
+	{
+		return "";
+	}
+	int32 Size = 0;
+	Archive >> Size;
+	if (Size <= 0)
+	{
+		return "";
+	}
+	TArray<ANSICHAR> Arr;
+	Arr.SetNum(Size);
+	Archive * Size >> Arr.GetData();
+	return FString(Size, Arr.GetData());
+}

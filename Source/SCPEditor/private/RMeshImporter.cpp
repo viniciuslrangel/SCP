@@ -1,4 +1,4 @@
-﻿#include "RMeshImport.h"
+﻿#include "RMeshImporter.h"
 
 #include "ArchiveHelper.h"
 
@@ -6,32 +6,14 @@
 #include "RawMesh.h"
 #include "SCPEditor.h"
 
-FString FRMeshImporter::ReadString(FArchive& Archive)
-{
-	if (Archive.GetArchiveState().IsError())
-	{
-		return "";
-	}
-	int32 Size = 0;
-	Archive >> Size;
-	if (Size <= 0)
-	{
-		return "";
-	}
-	TArray<ANSICHAR> Arr;
-	Arr.SetNum(Size);
-	Archive * Size >> Arr.GetData();
-	return FString(Size, Arr.GetData());
-}
-
-bool FRMeshImporter::Import(FArchive& Reader, TArray<TPair<FRawMesh, FTextureData>>& Out)
+bool FRMeshImporter::Import(FArchive& Reader, TArray<FData>& Out)
 {
 
 	const FString OriginalGamePath = UConfig::Get().OriginalGamePath;
 
 	bool bHasTriggerBox;
 
-	const FString Type = ReadString(Reader);
+	const FString Type = ReadBlitzString(Reader);
 
 	if (Type == "RoomMesh")
 	{
@@ -84,7 +66,7 @@ bool FRMeshImporter::Import(FArchive& Reader, TArray<TPair<FRawMesh, FTextureDat
 			}
 			if (!TextureBit) { continue; }
 
-			FString TextureName = ReadString(Reader);
+			FString TextureName = ReadBlitzString(Reader);
 			if (Reader.GetArchiveState().IsError())
 			{
 				check(false);
@@ -194,7 +176,7 @@ bool FRMeshImporter::Import(FArchive& Reader, TArray<TPair<FRawMesh, FTextureDat
 			Mesh.FaceMaterialIndices.Add(0);
 		}
 
-		Out.Add({Mesh, TexData});
+		Out.Add({FTransform(), Mesh, TexData});
 	}
 
 	return true;
