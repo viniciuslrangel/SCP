@@ -1,3 +1,4 @@
+using System.IO;
 using UnrealBuildTool;
 
 public class SCPEditor : ModuleRules
@@ -31,5 +32,7 @@ public class SCPEditor : ModuleRules
 			"DeveloperSettings",
 			"Kismet"
 		});
+		
+		PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib", "minidx9", "d3dxof.lib"));
 	}
 }
