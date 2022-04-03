@@ -24,7 +24,7 @@ protected:
 public:
 	APickableItem();
 
-	void OnUse(ASCPCharacter* Subject) override;
+	void OnUse(ASCPCharacter* Subject, UPrimitiveComponent* Comp) override;
 
 protected:
 	virtual void BeginPlay() override;

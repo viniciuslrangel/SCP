@@ -20,7 +20,7 @@ class SCP_API IInteractive
 	GENERATED_BODY()
 
 public:
-	virtual void OnUse(ASCPCharacter* Subject) = 0;
+	virtual void OnUse(ASCPCharacter* Subject, UPrimitiveComponent* Comp) = 0;
 
 	virtual void OnHover(ASCPCharacter* Subject, UPrimitiveComponent* Comp, bool bIsStartHover);
 };

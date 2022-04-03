@@ -260,7 +260,7 @@ void ASCPCharacter::UpdateLookingAt()
 		Hit,
 		CameraPos + CameraDir * 30,
 		CameraPos + CameraDir * MaxGrabDistance,
-		ECC_Camera,
+		ECC_InteractiveTraceChannel,
 		Param
 	);
 
@@ -373,7 +373,7 @@ void ASCPCharacter::R_InteractServer_Implementation(UPrimitiveComponent* TargetC
 	}
 	if (IInteractive* Interactive = Cast<IInteractive>(TargetActor))
 	{
-		Interactive->OnUse(this);
+		Interactive->OnUse(this, TargetComp);
 	}
 }
 

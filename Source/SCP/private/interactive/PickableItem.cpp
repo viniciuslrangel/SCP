@@ -20,7 +20,7 @@ APickableItem::APickableItem()
 	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
-void APickableItem::OnUse(ASCPCharacter* Subject)
+void APickableItem::OnUse(ASCPCharacter* Subject, UPrimitiveComponent* Comp)
 {
 	ASCPPlayerController* Controller = Subject->GetController<ASCPPlayerController>();
 	bool bOk = Controller->TryPutItemToInventory(RelatedItem);
