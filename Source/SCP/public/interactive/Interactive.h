@@ -20,7 +20,9 @@ class SCP_API IInteractive
 	GENERATED_BODY()
 
 public:
+	// This is called on server side
 	virtual void OnUse(ASCPCharacter* Subject, UPrimitiveComponent* Comp) = 0;
 
+	// This is called on client side
 	virtual void OnHover(ASCPCharacter* Subject, UPrimitiveComponent* Comp, bool bIsStartHover);
 };

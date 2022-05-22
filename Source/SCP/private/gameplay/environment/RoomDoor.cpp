@@ -72,7 +72,13 @@ void ARoomDoor::OnHover(ASCPCharacter* Subject, UPrimitiveComponent* Comp, bool 
 	{
 		return;
 	}
-	IInteractive::OnHover(Subject, Comp, bIsStartHover);
+
+	const int32 ChildrenCount = Comp->GetNumChildrenComponents();
+	if(ChildrenCount > 0)
+	{
+		USceneComponent* Child = Comp->GetChildComponent(0);
+		IInteractive::OnHover(Subject, Cast<UPrimitiveComponent>(Child), bIsStartHover);
+	}
 }
 
 void ARoomDoor::OnTimelineCallback(float Val)

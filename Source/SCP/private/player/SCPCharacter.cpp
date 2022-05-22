@@ -20,7 +20,7 @@ DECLARE_DELEGATE_OneParam(FSingleBoolDelegate, bool);
 ASCPCharacter::ASCPCharacter()
 {
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(55.f, 140.0f);
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -86,7 +86,7 @@ void ASCPCharacter::BeginPlay()
 		TArray<AActor*> PostProcessingActors;
 		UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("GLOBAL_POSTPROCESSING"), PostProcessingActors);
 		check(PostProcessingActors.Num() == 1);
-		if(PostProcessingActors.Num() == 1)
+		if (PostProcessingActors.Num() == 1)
 		{
 			AActor* Actor = PostProcessingActors[0];
 			APostProcessVolume* Volume = Cast<APostProcessVolume>(Actor);

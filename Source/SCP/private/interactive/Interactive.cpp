@@ -4,6 +4,10 @@
 
 void IInteractive::OnHover(ASCPCharacter* Subject, UPrimitiveComponent* Comp, bool bIsStartHover)
 {
+	if (!Comp)
+	{
+		return;
+	}
 	if (bIsStartHover)
 	{
 		Comp->SetRenderCustomDepth(true);
