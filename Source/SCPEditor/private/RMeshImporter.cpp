@@ -167,9 +167,9 @@ bool FRMeshImporter::Import(FArchive& Reader, TArray<FData>& Out)
 				Mesh.WedgeTexCoords[0].Add(FVector2f(U1, V1));
 				Mesh.WedgeTexCoords[1].Add(FVector2f(U2, V2));
 
-				Mesh.WedgeTangentX.Add(FVector::ZeroVector);
-				Mesh.WedgeTangentY.Add(FVector::ZeroVector);
-				Mesh.WedgeTangentZ.Add(FVector::ZeroVector);
+				Mesh.WedgeTangentX.Add(FVector3f::ZeroVector);
+				Mesh.WedgeTangentY.Add(FVector3f::ZeroVector);
+				Mesh.WedgeTangentZ.Add(FVector3f::ZeroVector);
 			}
 
 			Mesh.FaceSmoothingMasks.Add(0);
