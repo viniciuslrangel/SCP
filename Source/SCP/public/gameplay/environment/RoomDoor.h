@@ -45,4 +45,7 @@ public:
 private:
 	UFUNCTION()
 	void OnTimelineCallback(float Val);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void StartAnimation(bool bOpen);
 };

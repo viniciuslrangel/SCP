@@ -53,14 +53,8 @@ void ARoomDoor::OnUse(ASCPCharacter* Subject, UPrimitiveComponent* Comp)
 		return;
 	}
 
-	if (bIsOpen)
-	{
-		OpeningTimeline->Reverse();
-	}
-	else
-	{
-		OpeningTimeline->Play();
-	}
+	StartAnimation(bIsOpen);
+	StartAnimation_Implementation(bIsOpen);
 	bIsOpen = !bIsOpen;
 }
 
@@ -84,4 +78,16 @@ void ARoomDoor::OnHover(ASCPCharacter* Subject, UPrimitiveComponent* Comp, bool 
 void ARoomDoor::OnTimelineCallback(float Val)
 {
 	DoorPanel->SetRelativeLocation({Val * OpenMaxTranslation, 0.0f, 0.0f});
+}
+
+void ARoomDoor::StartAnimation_Implementation(bool bOpen)
+{
+	if (bOpen)
+	{
+		OpeningTimeline->Reverse();
+	}
+	else
+	{
+		OpeningTimeline->Play();
+	}
 }
